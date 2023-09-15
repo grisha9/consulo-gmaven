@@ -1,0 +1,28 @@
+<consulo-plugin url="https://github.com/consulo/consulo-maven">
+    <id>ru.rzn.gmyasoedov.gmaven</id>
+
+    <name>Maven Integration</name>
+    <description>Import Maven projects and execute Maven goals</description>
+    <vendor email="grisha0909@gmail.com">gmyasoedov</vendor>
+    <version>SNAPSHOT</version>
+
+    <depends>com.intellij.xml</depends>
+    <depends>com.intellij.properties</depends>
+    <depends>consulo.java</depends>
+    <category>Build</category>
+
+    <tags>
+        <tag>build.framework</tag>
+    </tags>
+
+    <actions>
+
+    </actions>
+
+    <!--<extensions defaultExtensionNs="com.intellij">
+        <registryKey key="gmaven.bundled.wrapper.version" defaultValue="3.9.1"
+                     description="Maven bundled wrapper version"/>
+        <registryKey key="gmaven.support.extensions" defaultValue="pom,xml,scala,groovy,atom,rb,yml,clj"
+                     description="Maven support extensions"/>
+    </extensions>-->
+</consulo-plugin>
