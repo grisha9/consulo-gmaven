@@ -5,9 +5,7 @@ import consulo.application.util.registry.Registry;
 import consulo.fileChooser.FileChooserDescriptor;
 import consulo.gmaven.Constants;
 import consulo.gmaven.MavenLog;
-import consulo.ide.impl.idea.execution.wsl.WSLDistribution;
 import consulo.ide.impl.idea.ide.actions.OpenProjectFileChooserDescriptor;
-import consulo.platform.Platform;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.SystemProperties;
@@ -19,7 +17,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Properties;
 
 import static consulo.util.io.JarUtil.getJarAttribute;
@@ -28,6 +26,11 @@ import static consulo.util.lang.StringUtil.*;
 
 public final class MavenUtils {
     private MavenUtils() {
+    }
+
+    public static boolean equalsPaths(String path1, String path2) {
+        if (path1 == null || path2 == null) return Objects.equals(path1, path2);
+        return Path.of(path1).equals(Path.of(path2));
     }
 
     public static boolean isValidMavenHome(@Nullable File home) {

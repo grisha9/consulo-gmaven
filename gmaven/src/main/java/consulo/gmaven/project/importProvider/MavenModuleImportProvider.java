@@ -17,7 +17,6 @@ import consulo.ide.impl.idea.openapi.externalSystem.service.project.manage.Proje
 import consulo.maven.icon.MavenIconGroup;
 import consulo.project.Project;
 import consulo.ui.image.Image;
-import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;

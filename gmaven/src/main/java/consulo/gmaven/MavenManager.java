@@ -9,8 +9,11 @@ import consulo.content.bundle.SdkTable;
 import consulo.externalSystem.ExternalSystemAutoImportAware;
 import consulo.externalSystem.ExternalSystemConfigurableAware;
 import consulo.externalSystem.ExternalSystemManager;
+import consulo.externalSystem.model.DataNode;
 import consulo.externalSystem.model.ProjectSystemId;
+import consulo.externalSystem.model.project.ModuleData;
 import consulo.externalSystem.service.project.ExternalSystemProjectResolver;
+import consulo.externalSystem.service.project.ProjectData;
 import consulo.externalSystem.task.ExternalSystemTaskManager;
 import consulo.externalSystem.ui.ExternalSystemUiAware;
 import consulo.externalSystem.util.ExternalSystemApiUtil;
@@ -21,6 +24,7 @@ import consulo.gmaven.project.task.MavenTaskManager;
 import consulo.gmaven.settings.*;
 import consulo.gmaven.util.MavenUtils;
 import consulo.ide.impl.idea.openapi.externalSystem.service.project.autoimport.CachingExternalSystemAutoImportAware;
+import consulo.ide.impl.idea.openapi.externalSystem.service.project.manage.ProjectDataManager;
 import consulo.java.execution.impl.util.JreSearchUtil;
 import consulo.maven.icon.MavenIconGroup;
 import consulo.platform.base.icon.PlatformIconGroup;
@@ -30,15 +34,22 @@ import consulo.project.Project;
 import consulo.ui.image.Image;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
+import jakarta.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import static consulo.externalSystem.model.ProjectKeys.MODULE;
+import static consulo.externalSystem.util.ExternalSystemApiUtil.findAll;
+import static consulo.gmaven.Constants.MODULE_PROP_BUILD_FILE;
 import static consulo.gmaven.Constants.SYSTEM_ID;
+import static consulo.gmaven.util.MavenUtils.equalsPaths;
 
 @ExtensionImpl
 public class MavenManager implements
@@ -138,7 +149,7 @@ public class MavenManager implements
 
     @Override
     public void enhanceRemoteProcessing(@Nonnull SimpleJavaParameters simpleJavaParameters) throws ExecutionException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -199,4 +210,68 @@ public class MavenManager implements
         }
         return result;
     }
+
+    private static void fillExecutionWorkSpace(Project project,
+                                               MavenProjectSettings projectSettings,
+                                               String projectPath,
+                                               MavenExecutionWorkspace workspace) {
+        /*ExternalProjectInfo projectData = ProjectDataManager.getInstance()
+                .getExternalProjectData(project, SYSTEM_ID, projectSettings.getExternalProjectPath());
+
+        if (projectData == null || projectData.getExternalProjectStructure() == null) return;
+        ProjectProfilesStateService profilesStateService = ProjectProfilesStateService.getInstance(project);
+        DataNode<ProjectData> projectDataNode = projectData.getExternalProjectStructure();
+        DataNode<ModuleData> mainModuleNode = ExternalSystemApiUtil.find(projectDataNode, MODULE);
+        if (mainModuleNode == null) return;
+        if (projectSettings.getProjectBuildFile() != null) {
+            workspace.setProjectBuildFile(projectSettings.getProjectBuildFile());
+        } else {
+            workspace.setProjectBuildFile(mainModuleNode.getData().getProperty(MODULE_PROP_BUILD_FILE));
+        }
+
+        Collection<DataNode<ModuleData>> allModules = ExternalSystemApiUtil.findAll(mainModuleNode, MODULE);
+
+        boolean isRootPath = equalsPaths(projectSettings.getExternalProjectPath(), projectPath);
+        if (!isRootPath) {
+            allModules.stream()
+                    .filter(node -> equalsPaths(node.getData().getLinkedExternalProjectPath(), projectPath))
+                    .findFirst()
+                    .ifPresent(node -> {
+                        ModuleData module = node.getData();
+                        workspace.setSubProjectBuildFile(module.getProperty(MODULE_PROP_BUILD_FILE));
+                        //addedIgnoredModule(workspace, findAllRecursively(node, MODULE));
+                        if (projectSettings.isUseWholeProjectContext()) {
+                            String parentBuildFile = getParentBuildFile(node);
+                            if (parentBuildFile != null) {
+                                workspace.setProjectBuildFile(parentBuildFile);
+                                if (equalsPaths(workspace.getProjectBuildFile(), workspace.getSubProjectBuildFile())) {
+                                    workspace.setSubProjectBuildFile(null);
+                                }
+                            }
+                            if (workspace.getSubProjectBuildFile() != null) {
+                                workspace.addProject(new ProjectExecution(MavenUtils.toGAString(module), true));
+                            }
+                            workspace.setSubProjectBuildFile(null);
+                        }
+                    });
+        } else {
+            addedIgnoredModule(workspace, allModules);
+        }*/
+
+        /*for (DataNode<ProfileData> profileDataNode : findAll(projectDataNode, ProfileData.KEY)) {
+            ProfileExecution profileExecution = profilesStateService.getProfileExecution(profileDataNode.getData());
+            if (profileExecution != null) {
+                workspace.addProfile(profileExecution);
+            }
+        }*/
+    }
+
+    /*@Nullable
+    private static String getParentBuildFile(@Nonnull DataNode<ModuleData> node) {
+        String parentGA = node.getData().getProperty(Constants.MODULE_PROP_PARENT_GA);
+        if (parentGA != null && node.getParent() != null && node.getParent().getData() instanceof ModuleData) {
+            return getParentBuildFile((DataNode<ModuleData>) node.getParent());
+        }
+        return node.getData().getProperty(MODULE_PROP_BUILD_FILE);
+    }*/
 }

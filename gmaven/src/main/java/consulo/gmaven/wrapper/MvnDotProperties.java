@@ -22,14 +22,14 @@ public final class MvnDotProperties {
     }
 
     @Nonnull
-    public static String getDistributionUrl(Project project, String projectPath) {
+    public static String getDistributionUrl(@Nullable Project project, @Nonnull String projectPath) {
         var propertiesVFile = getWrapperPropertiesVFile(projectPath);
         if (propertiesVFile == null) return "";
         return getWrapperProperties(project, propertiesVFile).getProperty(DISTRIBUTION_URL_PROPERTY, "");
     }
 
     @Nonnull
-    public  static String getJvmConfig(Path projectPath) {
+    public  static String getJvmConfig(@Nonnull Path projectPath) {
         var jvmConfigVFile = getJvmConfigVFile(projectPath);
         if (jvmConfigVFile == null) return "";
         try {
@@ -57,7 +57,10 @@ public final class MvnDotProperties {
 
     }
 
-    private static Properties getWrapperProperties(Project project, VirtualFile wrapperProperties) {
+    private static Properties getWrapperProperties(@Nullable Project project, @Nonnull VirtualFile wrapperProperties) {
+        if (project == null) {
+            return getWrapperProperties(wrapperProperties);
+        }
         return CachedValuesManager.getManager(project)
                 .getCachedValue(
                         project,

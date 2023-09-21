@@ -20,10 +20,9 @@ import consulo.ui.ex.SimpleTextAttributes;
 import consulo.ui.ex.awt.*;
 import consulo.util.lang.StringUtil;
 import consulo.util.nodep.SystemInfoRt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
@@ -71,10 +70,10 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
     private SdkComboBox jdkComboBox;
     private JPanel jdkComboBoxWrapper;
 
-    @Nonnull
+    @Nullable
     private final Project project;
 
-    public ProjectSettingsControl(@Nonnull Project project, @Nonnull MavenProjectSettings initialSettings) {
+    public ProjectSettingsControl(@Nullable Project project, @Nonnull MavenProjectSettings initialSettings) {
         super(initialSettings);
         this.project = project;
     }
@@ -288,12 +287,14 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
             mavenHomeCombobox.addItem(
                     new DistributionSettingsComboBoxItem(DistributionSettings.getBundled())
             );
+
             var distributionUrl = MvnDotProperties.getDistributionUrl(project, projectSettings.getExternalProjectPath());
             if (!distributionUrl.isEmpty()) {
                 mavenHomeCombobox.addItem(
                         new DistributionSettingsComboBoxItem(DistributionSettings.getWrapper(distributionUrl))
                 );
             }
+
 
             DistributionSettings current = projectSettings.getDistributionSettings();
             var mavenHome = MavenUtils.resolveMavenHome();
