@@ -22,6 +22,9 @@
     </properties>
     <modules>
         <module>gmaven</module>
+        <module>server-api</module>
+        <module>server</module>
+        <module>maven-ext-event-handler</module>
     </modules>
 
     <repositories>
@@ -34,4 +37,5 @@
             </snapshots>
         </repository>
     </repositories>
+
 </project>

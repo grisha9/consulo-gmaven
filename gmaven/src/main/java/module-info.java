@@ -5,7 +5,6 @@ open module consulo.gmaven
 	requires consulo.util.nodep;
 
 	requires com.intellij.xml;
-
 	requires com.intellij.properties;
 
 	requires consulo.java.execution.api;

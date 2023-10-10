@@ -109,5 +109,29 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>consulo.gmaven</groupId>
+            <artifactId>server</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>consulo.gmaven</groupId>
+            <artifactId>maven-ext-event-handler</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>consulo.gmaven</groupId>
+            <artifactId>server-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.rzn.gmyasoedov</groupId>
+            <artifactId>model-reader</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/model-reader-1.0-SNAPSHOT.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>
