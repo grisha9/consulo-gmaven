@@ -5,7 +5,7 @@ import consulo.gmaven.api.model.MavenResult;
 import consulo.gmaven.event.handler.converter.MavenErrorConverter;
 import consulo.gmaven.event.handler.converter.MavenProjectContainerConverter;
 import consulo.gmaven.event.handler.converter.MavenSettingsConverter;
-import consulo.gserver.result.ResultHolder;
+import consulo.maven.server.result.ResultHolder;
 import org.apache.maven.eventspy.AbstractEventSpy;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.MavenExecutionResult;

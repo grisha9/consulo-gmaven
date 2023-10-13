@@ -11,7 +11,6 @@ import consulo.gmaven.MavenLog;
 import consulo.gmaven.api.GMavenServer;
 import consulo.gmaven.extensionpoints.plugin.MavenFullImportPlugin;
 import consulo.gmaven.settings.MavenExecutionSettings;
-import consulo.ide.impl.idea.openapi.util.text.StringUtilRt;
 import consulo.ide.impl.idea.util.PathUtil;
 import consulo.ide.impl.idea.util.net.NetUtils;
 import consulo.java.execution.configurations.OwnJavaParameters;
@@ -36,6 +35,7 @@ import static consulo.gmaven.api.GMavenServer.*;
 
 public class MavenServerCmdState extends CommandLineState {
 
+    public static final String REMOTE_GMAVEN_SERVER = "consulo.maven.server.RemoteGMavenServer";
     private final Sdk jdk;
     private final Path mavenPath;
     private final Path workingDirectory;
@@ -66,7 +66,7 @@ public class MavenServerCmdState extends CommandLineState {
         setupClasspath(params);
         setupGmavenPluginsProperty(params);
         processVmOptions(jvmConfigOptions, params);
-        params.setMainClass("consulo.gserver.RemoteGMavenServer");
+        params.setMainClass(REMOTE_GMAVEN_SERVER);
         return params;
     }
 
@@ -92,8 +92,7 @@ public class MavenServerCmdState extends CommandLineState {
         String mavenServerJarPathString;
         String mavenExtClassesJarPathString;
         try {
-            mavenServerJarPathString = PathUtil
-                    .getJarPathForClass(Class.forName("consulo.gserver.RemoteGMavenServer"));
+            mavenServerJarPathString = PathUtil.getJarPathForClass(Class.forName(REMOTE_GMAVEN_SERVER));
             mavenExtClassesJarPathString = PathUtil
                     .getJarPathForClass(Class.forName("consulo.gmaven.event.handler.EventSpyResultHolder"));
         } catch (ClassNotFoundException e) {
@@ -107,12 +106,10 @@ public class MavenServerCmdState extends CommandLineState {
 
         params.getVMParametersList().addProperty(MAVEN_EXT_CLASS_PATH_PROPERTY, mavenExtClassesJarPathString);
         params.getVMParametersList().addProperty(GMAVEN_HOME, mavenPath.toAbsolutePath().toString());
-        //executionSettings.getEnv().forEach((k, v) -> addProperty(params, k, v));
+        executionSettings.getEnv().forEach((k, v) -> params.getVMParametersList().addProperty(k, v));
     }
 
     private void processVmOptions(List<String> jvmConfigOptions, OwnJavaParameters params) {
-        @Nullable String xmxProperty = null;
-        @Nullable String xmsProperty = null;
         List<String> vmOptions = new ArrayList<>(jvmConfigOptions);
         if (executionSettings.getVmOptions() != null) {
             vmOptions.addAll(ParametersListUtil.parse(executionSettings.getVmOptions(), true, true));
@@ -179,7 +176,7 @@ public class MavenServerCmdState extends CommandLineState {
 
     protected @Nonnull List<String> collectIdeaRTLibraries() {
         return new ArrayList<>(Set.of(
-                PathUtil.getJarPathForClass(StringUtilRt.class),//util-rt
+                PathUtil.getJarPathForClass(consulo.util.rmi.RemoteServer.class),//remote-rt
                 PathUtil.getJarPathForClass(Nonnull.class)));//annotations-java5
     }
 
@@ -222,7 +219,6 @@ public class MavenServerCmdState extends CommandLineState {
     @Nonnull
     protected ProcessHandler startProcess() throws ExecutionException {
         OwnJavaParameters params = createJavaParameters();
-        //GeneralCommandLine commandLine = params.toCommandLine();
         GeneralCommandLine commandLine = OwnJdkUtil.setupJVMCommandLine(params);
         return ProcessHandlerBuilder.create(commandLine)
                 .shouldDestroyProcessRecursively(false)

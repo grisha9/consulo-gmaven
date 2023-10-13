@@ -1,10 +1,13 @@
 package consulo.gmaven.settings;
 
 import consulo.externalSystem.model.setting.ExternalSystemExecutionSettings;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serial;
-import java.util.List;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class MavenExecutionSettings extends ExternalSystemExecutionSettings {
@@ -30,14 +33,17 @@ public class MavenExecutionSettings extends ExternalSystemExecutionSettings {
     private String arguments;
     @Nullable
     private String argumentsImport;
+    @Nonnull
+    private final Map<String, String> env = new LinkedHashMap<>();
     private final boolean offlineWork;
     private boolean resolveModulePerSourceSet = false;
     private boolean useQualifiedModuleNames = false;
     private boolean nonRecursive = false;
-    private boolean updateSnapshots = false;
     private boolean showPluginNodes = true;
     @Nonnull
     private OutputLevelType outputLevel = OutputLevelType.DEFAULT;
+    @Nonnull
+    private SnapshotUpdateType snapshotUpdateType = SnapshotUpdateType.DEFAULT;
 
     public MavenExecutionSettings(@Nonnull DistributionSettings distributionSettings,
                                   boolean nonRecursive,
@@ -121,12 +127,13 @@ public class MavenExecutionSettings extends ExternalSystemExecutionSettings {
         this.nonRecursive = nonRecursive;
     }
 
-    public boolean isUpdateSnapshots() {
-        return updateSnapshots;
+    @Nonnull
+    public SnapshotUpdateType getSnapshotUpdateType() {
+        return snapshotUpdateType;
     }
 
-    public void setUpdateSnapshots(boolean updateSnapshots) {
-        this.updateSnapshots = updateSnapshots;
+    public void setSnapshotUpdateType(@Nonnull SnapshotUpdateType snapshotUpdateType) {
+        this.snapshotUpdateType = snapshotUpdateType;
     }
 
     @Nonnull
@@ -164,8 +171,22 @@ public class MavenExecutionSettings extends ExternalSystemExecutionSettings {
         this.arguments = arguments;
     }
 
+    @Nullable
+    public String getArgumentsImport() {
+        return argumentsImport;
+    }
+
     public void setArgumentsImport(@Nullable String argumentsImport) {
         this.argumentsImport = argumentsImport;
+    }
+
+    @Nonnull
+    public Map<String, String> getEnv() {
+        return Collections.unmodifiableMap(env);
+    }
+
+    public void addEnvParam(@Nonnull String key, @Nonnull String value) {
+        env.put(Objects.requireNonNull(key), Objects.requireNonNull(value));
     }
 
     @Override

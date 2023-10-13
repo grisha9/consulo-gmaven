@@ -1,10 +1,10 @@
-package consulo.gserver.impl;
+package consulo.maven.server.impl;
 
 import consulo.gmaven.api.GMavenServer;
 import consulo.gmaven.api.GServerUtils;
 import consulo.gmaven.api.model.MavenResult;
 import consulo.gmaven.api.model.request.GetModelRequest;
-import consulo.gserver.result.ResultHolder;
+import consulo.maven.server.result.ResultHolder;
 import org.codehaus.plexus.classworlds.launcher.Launcher;
 
 import java.nio.file.Paths;

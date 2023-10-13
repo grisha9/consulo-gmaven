@@ -1,6 +1,9 @@
 
 open module consulo.gmaven
 {
+	requires consulo.gmaven.server.api;
+	requires consulo.maven.server;
+
 	requires consulo.ide.api;
 	requires consulo.util.nodep;
 

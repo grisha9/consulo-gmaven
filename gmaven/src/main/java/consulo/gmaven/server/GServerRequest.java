@@ -15,4 +15,18 @@ public class GServerRequest {
     public MavenExecutionSettings settings;
     public boolean installGMavenPlugin = false;
     public ExternalSystemTaskNotificationListener listener;
+
+    public GServerRequest(ExternalSystemTaskId taskId,
+                          Path projectPath,
+                          Path mavenPath,
+                          Sdk sdk,
+                          MavenExecutionSettings settings,
+                          ExternalSystemTaskNotificationListener listener) {
+        this.taskId = taskId;
+        this.projectPath = projectPath;
+        this.mavenPath = mavenPath;
+        this.sdk = sdk;
+        this.settings = settings;
+        this.listener = listener;
+    }
 }

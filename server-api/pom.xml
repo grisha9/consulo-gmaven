@@ -52,7 +52,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Automatic-Module-Name>consulo.gmaven.server.m3.common</Automatic-Module-Name>
+                            <Automatic-Module-Name>consulo.gmaven.server.api</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>

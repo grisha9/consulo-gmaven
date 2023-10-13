@@ -113,7 +113,6 @@
             <groupId>consulo.gmaven</groupId>
             <artifactId>server</artifactId>
             <version>${project.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>consulo.gmaven</groupId>

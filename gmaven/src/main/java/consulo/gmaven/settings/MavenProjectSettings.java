@@ -16,11 +16,12 @@ public class MavenProjectSettings extends ExternalProjectSettings {
     private String vmOptions;
     private boolean resolveModulePerSourceSet = false;
     private boolean nonRecursive  = false;
-    private boolean updateSnapshots = false;
     private boolean useWholeProjectContext = true;
     private boolean showPluginNodes = true;
     @Nonnull
     private OutputLevelType outputLevel = OutputLevelType.DEFAULT;
+    @Nonnull
+    private SnapshotUpdateType snapshotUpdateType = SnapshotUpdateType.DEFAULT;
     @Nullable
     private String threadCount;
     @Nullable
@@ -80,12 +81,13 @@ public class MavenProjectSettings extends ExternalProjectSettings {
         this.nonRecursive = nonRecursive;
     }
 
-    public boolean isUpdateSnapshots() {
-        return updateSnapshots;
+    @Nonnull
+    public SnapshotUpdateType getSnapshotUpdateType() {
+        return snapshotUpdateType;
     }
 
-    public void setUpdateSnapshots(boolean updateSnapshots) {
-        this.updateSnapshots = updateSnapshots;
+    public void setSnapshotUpdateType(@Nonnull SnapshotUpdateType snapshotUpdateType) {
+        this.snapshotUpdateType = snapshotUpdateType;
     }
 
     public boolean isUseWholeProjectContext() {
@@ -155,7 +157,7 @@ public class MavenProjectSettings extends ExternalProjectSettings {
         result.argumentsImport = argumentsImport;
         result.resolveModulePerSourceSet = false;
         result.nonRecursive  = nonRecursive;
-        result.updateSnapshots = updateSnapshots;
+        result.snapshotUpdateType = snapshotUpdateType;
         result.useWholeProjectContext = useWholeProjectContext;
         result.showPluginNodes = showPluginNodes;
         return result;

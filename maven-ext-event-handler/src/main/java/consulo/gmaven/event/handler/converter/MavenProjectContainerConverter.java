@@ -5,7 +5,6 @@ import consulo.gmaven.event.handler.EventSpyResultHolder;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.Os;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +48,7 @@ public class MavenProjectContainerConverter {
                                       Map<File, MavenProject> projectByDirectoryMap) {
         consulo.gmaven.api.model.MavenProject project = rootContainer.getProject();
         for (String module : project.getModulesDir()) {
-            if (StringUtils.isEmpty(module)) continue;
+            if (module == null || module.isEmpty()) continue;
 
             File moduleFile = new File(module);
             MavenProject mavenProjectByModuleFile = projectByDirectoryMap.get(moduleFile);

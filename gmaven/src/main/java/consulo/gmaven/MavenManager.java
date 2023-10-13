@@ -9,11 +9,8 @@ import consulo.content.bundle.SdkTable;
 import consulo.externalSystem.ExternalSystemAutoImportAware;
 import consulo.externalSystem.ExternalSystemConfigurableAware;
 import consulo.externalSystem.ExternalSystemManager;
-import consulo.externalSystem.model.DataNode;
 import consulo.externalSystem.model.ProjectSystemId;
-import consulo.externalSystem.model.project.ModuleData;
 import consulo.externalSystem.service.project.ExternalSystemProjectResolver;
-import consulo.externalSystem.service.project.ProjectData;
 import consulo.externalSystem.task.ExternalSystemTaskManager;
 import consulo.externalSystem.ui.ExternalSystemUiAware;
 import consulo.externalSystem.util.ExternalSystemApiUtil;
@@ -24,7 +21,6 @@ import consulo.gmaven.project.task.MavenTaskManager;
 import consulo.gmaven.settings.*;
 import consulo.gmaven.util.MavenUtils;
 import consulo.ide.impl.idea.openapi.externalSystem.service.project.autoimport.CachingExternalSystemAutoImportAware;
-import consulo.ide.impl.idea.openapi.externalSystem.service.project.manage.ProjectDataManager;
 import consulo.java.execution.impl.util.JreSearchUtil;
 import consulo.maven.icon.MavenIconGroup;
 import consulo.platform.base.icon.PlatformIconGroup;
@@ -34,22 +30,15 @@ import consulo.project.Project;
 import consulo.ui.image.Image;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
-import jakarta.inject.Inject;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import static consulo.externalSystem.model.ProjectKeys.MODULE;
-import static consulo.externalSystem.util.ExternalSystemApiUtil.findAll;
-import static consulo.gmaven.Constants.MODULE_PROP_BUILD_FILE;
 import static consulo.gmaven.Constants.SYSTEM_ID;
-import static consulo.gmaven.util.MavenUtils.equalsPaths;
 
 @ExtensionImpl
 public class MavenManager implements
@@ -172,7 +161,7 @@ public class MavenManager implements
             );
             result.setResolveModulePerSourceSet(projectSettings.isResolveModulePerSourceSet());
             result.setNonRecursive(projectSettings.isNonRecursive());
-            result.setUpdateSnapshots(projectSettings.isUpdateSnapshots());
+            result.setSnapshotUpdateType(projectSettings.getSnapshotUpdateType());
             result.setThreadCount(projectSettings.getThreadCount());
             result.setOutputLevel(projectSettings.getOutputLevel());
             result.setShowPluginNodes(projectSettings.isShowPluginNodes());
@@ -180,11 +169,9 @@ public class MavenManager implements
             //fillExecutionWorkSpace(project, projectSettings, projectPath, result.getExecutionWorkspace());
             if (projectSettings.getArguments() != null) {
                 result.setArguments(projectSettings.getArguments());
-                // result.withArguments(ParametersListUtil.parse(projectSettings.getArguments(), true, true));
             }
             if (projectSettings.getArgumentsImport() != null) {
                 result.setArgumentsImport(projectSettings.getArgumentsImport());
-                //result.setArgumentsImport(ParametersListUtil.parse(projectSettings.getArgumentsImport(), true, true));
             }
         }
 
@@ -206,7 +193,7 @@ public class MavenManager implements
         result.setJavaHome(targetSdk == null ? null : targetSdk.getHomePath());
 
         if (settings.isSkipTests()) {
-            //result.withEnvironmentVariables(Map.of("skipTests", "true"));
+            result.addEnvParam("skipTests", "true");
         }
         return result;
     }

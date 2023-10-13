@@ -10,6 +10,8 @@ import consulo.gmaven.settings.MavenExecutionSettings;
 import consulo.ide.impl.idea.execution.rmi.RemoteProcessSupport;
 import consulo.process.ExecutionException;
 import consulo.process.cmd.ParametersListUtil;
+import consulo.process.event.ProcessEvent;
+import consulo.util.dataholder.Key;
 import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
@@ -42,9 +44,23 @@ public class GServerRemoteProcessSupport extends RemoteProcessSupport<Object, GM
                 ? Collections.emptyList() : ParametersListUtil.parse(jvmConfig, true, true);
     }
 
+    public ExternalSystemTaskId getId() {
+        return id;
+    }
+
     @Override
     protected void fireModificationCountChanged() {
+    }
 
+    @Override
+    protected void logText(Object configuration, ProcessEvent event, Key outputType, Object info) {
+        String text = StringUtil.notNullize(event.getText());
+        if (true) {
+            System.out.println(text);
+        }
+        if (systemTaskNotificationListener != null) {
+            systemTaskNotificationListener.onTaskOutput(id, text, true);
+        }
     }
 
     @Override
@@ -54,6 +70,6 @@ public class GServerRemoteProcessSupport extends RemoteProcessSupport<Object, GM
 
     @Override
     protected RunProfileState getRunProfileState(Object o, Object configuration, Executor executor) throws ExecutionException {
-        return null;
+        return new MavenServerCmdState(jdk, mavenPath, workingDirectory, jvmConfigOptions, executionSettings);
     }
 }

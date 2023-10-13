@@ -1,4 +1,4 @@
-package consulo.gserver.result;
+package consulo.maven.server.result;
 
 import consulo.gmaven.api.model.MavenResult;
 
