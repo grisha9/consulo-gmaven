@@ -2,15 +2,22 @@ package consulo.gmaven.util;
 
 import consulo.application.util.SystemInfo;
 import consulo.application.util.registry.Registry;
+import consulo.externalSystem.model.project.ModuleData;
+import consulo.externalSystem.rt.model.ExternalSystemException;
 import consulo.fileChooser.FileChooserDescriptor;
 import consulo.gmaven.Constants;
 import consulo.gmaven.MavenLog;
+import consulo.gmaven.api.model.MavenId;
+import consulo.gmaven.api.model.MavenProject;
+import consulo.gmaven.settings.DistributionSettings;
+import consulo.gmaven.wrapper.MavenWrapperDistribution;
 import consulo.ide.impl.idea.ide.actions.OpenProjectFileChooserDescriptor;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.SystemProperties;
 import consulo.util.nodep.io.FileUtilRt;
 import consulo.virtualFileSystem.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,6 +33,36 @@ import static consulo.util.lang.StringUtil.*;
 
 public final class MavenUtils {
     private MavenUtils() {
+    }
+
+    @Nonnull
+    public static String toGAString(@NotNull ModuleData moduleData) {
+        return moduleData.getGroup() + ":" + moduleData.getExternalName();
+    }
+
+    @Nonnull
+    public static String toGAString(@Nonnull MavenId mavenId) {
+        return mavenId.getGroupId() + ":" + mavenId.getArtifactId();
+    }
+
+    @Nonnull
+    public static Path resolveM2() {
+        return Path.of(SystemProperties.getUserHome(), ".m2");
+    }
+
+    public static @Nonnull Path getGeneratedSourcesDirectory(@Nonnull String buildDirectory, boolean testSources) {
+        return Path.of(buildDirectory, (testSources ? "generated-test-sources" : "generated-sources"));
+    }
+
+    @Nonnull
+    public static Path getMavenHome(DistributionSettings distributionSettings) {
+        if (distributionSettings.getPath() != null) return distributionSettings.getPath();
+        if (distributionSettings.getUrl() != null) {
+            var mavenHome = MavenWrapperDistribution.getOrDownload(distributionSettings.getUrl());
+            distributionSettings.setPath(mavenHome.path());
+            return mavenHome.path();
+        }
+        throw new ExternalSystemException("maven home is empty");
     }
 
     public static boolean equalsPaths(String path1, String path2) {
@@ -123,6 +160,10 @@ public final class MavenUtils {
         }
         MavenLog.LOG.warn("Cannot resolve maven version for " + mavenHome);
         return null;
+    }
+
+    public static boolean isPomProject(@Nonnull MavenProject project) {
+        return "pom".equalsIgnoreCase(project.getPackaging());
     }
 
     public static boolean isPomFileName(String fileName) {

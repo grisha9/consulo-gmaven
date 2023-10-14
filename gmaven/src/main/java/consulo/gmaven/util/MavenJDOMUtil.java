@@ -4,6 +4,7 @@ import consulo.gmaven.MavenLog;
 import consulo.util.jdom.JDOMUtil;
 import org.jdom.Element;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public final class MavenJDOMUtil {
 
     public static final Element JDOM_ELEMENT_EMPTY = new Element("empty");
 
+    @Nonnull
     public static Element parseConfiguration(@Nullable String it) {
         try {
             if (it == null) return JDOM_ELEMENT_EMPTY;

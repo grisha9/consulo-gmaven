@@ -70,6 +70,11 @@ public class MavenId implements Serializable {
         return true;
     }
 
+    @Nonnull
+    public String getId() {
+        return groupId + ":" + artifactId  + ":" + version;
+    }
+
     public boolean equals(@Nullable String groupId, @Nullable String artifactId, @Nullable String version) {
         if (!equals(groupId, artifactId)) return false;
         if (!Objects.equals(this.version, version)) return false;
