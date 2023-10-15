@@ -276,6 +276,7 @@ public class ModuleDataConverter {
             @Nonnull MavenProject mavenProject,
             @Nonnull ProjectResolverContext context
     ) {
+        //todo
         for (String basicPhase : Constants.BASIC_PHASES) {
             moduleDataNode.createChild(
                     LifecycleData.KEY, new LifecycleData(SYSTEM_ID, basicPhase, mavenProject.getBasedir())

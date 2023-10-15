@@ -159,7 +159,6 @@ public class MavenManager implements
             result = new MavenExecutionSettings(projectSettings.getDistributionSettings(),
                     projectSettings.isNonRecursive(), settings.isOfflineMode()
             );
-            result.setResolveModulePerSourceSet(projectSettings.isResolveModulePerSourceSet());
             result.setNonRecursive(projectSettings.isNonRecursive());
             result.setSnapshotUpdateType(projectSettings.getSnapshotUpdateType());
             result.setThreadCount(projectSettings.getThreadCount());

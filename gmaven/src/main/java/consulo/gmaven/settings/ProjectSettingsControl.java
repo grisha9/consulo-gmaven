@@ -45,8 +45,6 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
     @Nullable
     private JBCheckBox useWholeProjectContextCheckBox;
     @Nullable
-    private JBCheckBox resolveModulePerSourceSetCheckBox;
-    @Nullable
     private JBCheckBox showPluginNodesCheckBox;
     @Nullable
     private JTextField threadCountField;
@@ -86,9 +84,6 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
         useWholeProjectContextCheckBox = new JBCheckBox(message("gmaven.settings.project.task.context"));
         useWholeProjectContextCheckBox.setToolTipText(message("gmaven.settings.project.task.context.tooltip"));
         content.add(useWholeProjectContextCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
-
-        resolveModulePerSourceSetCheckBox = new JBCheckBox(message("gmaven.settings.project.module.per.source.set"));
-        content.add(resolveModulePerSourceSetCheckBox, ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
 
         showPluginNodesCheckBox = new JBCheckBox(message("gmaven.settings.project.plugins"));
         showPluginNodesCheckBox.setToolTipText(message("gmaven.settings.project.plugins.tooltip"));
@@ -188,10 +183,6 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
                 && useWholeProjectContextCheckBox.isSelected() != projectSettings.isUseWholeProjectContext()) {
             return true;
         }
-        if (resolveModulePerSourceSetCheckBox != null
-                && resolveModulePerSourceSetCheckBox.isSelected() != projectSettings.isResolveModulePerSourceSet()) {
-            return true;
-        }
         if (showPluginNodesCheckBox != null
                 && showPluginNodesCheckBox.isSelected() != projectSettings.isShowPluginNodes()) {
             return true;
@@ -252,9 +243,6 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
         }
         if (useWholeProjectContextCheckBox != null) {
             useWholeProjectContextCheckBox.setSelected(projectSettings.isUseWholeProjectContext());
-        }
-        if (resolveModulePerSourceSetCheckBox != null) {
-            resolveModulePerSourceSetCheckBox.setSelected(projectSettings.isResolveModulePerSourceSet());
         }
         if (showPluginNodesCheckBox != null) {
             showPluginNodesCheckBox.setSelected(projectSettings.isShowPluginNodes());
@@ -338,9 +326,6 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
         }
         if (useWholeProjectContextCheckBox != null) {
             settings.setUseWholeProjectContext(useWholeProjectContextCheckBox.isSelected());
-        }
-        if (resolveModulePerSourceSetCheckBox != null) {
-            settings.setResolveModulePerSourceSet(resolveModulePerSourceSetCheckBox.isSelected());
         }
         if (showPluginNodesCheckBox != null) {
             settings.setShowPluginNodes(showPluginNodesCheckBox.isSelected());

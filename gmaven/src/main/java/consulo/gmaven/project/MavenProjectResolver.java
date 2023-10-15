@@ -2,9 +2,12 @@ package consulo.gmaven.project;
 
 import com.intellij.java.impl.externalSystem.JavaProjectData;
 import com.intellij.java.language.LanguageLevel;
+import com.intellij.java.language.projectRoots.JavaSdk;
+import com.intellij.java.language.projectRoots.JavaSdkVersion;
 import consulo.application.Application;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkTable;
+import consulo.content.bundle.SdkTypeId;
 import consulo.externalSystem.model.DataNode;
 import consulo.externalSystem.model.ProjectKeys;
 import consulo.externalSystem.model.project.ModuleData;
@@ -60,7 +63,7 @@ public class MavenProjectResolver implements ExternalSystemProjectResolver<Maven
         var request = new GServerRequest(id, buildPath, mavenHome, sdk, settings, listener);
         try {
             var projectModel = GServerHelper.getProjectModel(request, (process -> cancellationMap.put(id, process)));
-            return getProjectDataNode(projectPath, projectModel, settings);
+            return getProjectDataNode(sdk, projectModel, settings);
         } finally {
             cancellationMap.remove(id);
         }
@@ -113,7 +116,7 @@ public class MavenProjectResolver implements ExternalSystemProjectResolver<Maven
 
     @Nonnull
     private DataNode<ProjectData> getProjectDataNode(
-            @Nonnull String projectPath, @Nonnull MavenResult mavenResult, @Nonnull MavenExecutionSettings settings
+            @Nonnull Sdk sdk, @Nonnull MavenResult mavenResult, @Nonnull MavenExecutionSettings settings
     ) {
         var container = mavenResult.projectContainer;
         var project = container.getProject();
@@ -121,10 +124,16 @@ public class MavenProjectResolver implements ExternalSystemProjectResolver<Maven
         var absolutePath = project.getBasedir();
         var projectData = new ProjectData(SYSTEM_ID, projectName, absolutePath, absolutePath);
 
+        LanguageLevel languageLevel = null;
         var projectDataNode = new DataNode<>(ProjectKeys.PROJECT, projectData, null);
-
-        var sdkName = settings.getJdkName();
-        var languageLevel = LanguageLevel.parse(sdkName);
+        SdkTypeId sdkType = sdk.getSdkType();
+        if (sdkType instanceof JavaSdk) {
+            JavaSdkVersion version = ((JavaSdk) sdkType).getVersion(sdk);
+            languageLevel = version != null ? version.getMaxLanguageLevel() : null;
+        }
+        if (languageLevel == null) {
+            languageLevel = LanguageLevel.JDK_1_8;
+        }
         var javaProjectData = new JavaProjectData(SYSTEM_ID, project.getOutputDirectory());
         projectDataNode.createChild(JavaProjectData.KEY, javaProjectData);
 

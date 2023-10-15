@@ -14,7 +14,6 @@ public class MavenProjectSettings extends ExternalProjectSettings {
     private String jdkName;
     @Nullable
     private String vmOptions;
-    private boolean resolveModulePerSourceSet = false;
     private boolean nonRecursive  = false;
     private boolean useWholeProjectContext = true;
     private boolean showPluginNodes = true;
@@ -63,14 +62,6 @@ public class MavenProjectSettings extends ExternalProjectSettings {
 
     public void setVmOptions(@Nullable String vmOptions) {
         this.vmOptions = vmOptions;
-    }
-
-    public boolean isResolveModulePerSourceSet() {
-        return resolveModulePerSourceSet;
-    }
-
-    public void setResolveModulePerSourceSet(boolean resolveModulePerSourceSet) {
-        this.resolveModulePerSourceSet = resolveModulePerSourceSet;
     }
 
     public boolean isNonRecursive() {
@@ -155,7 +146,6 @@ public class MavenProjectSettings extends ExternalProjectSettings {
         result.threadCount = threadCount;
         result.arguments = arguments;
         result.argumentsImport = argumentsImport;
-        result.resolveModulePerSourceSet = false;
         result.nonRecursive  = nonRecursive;
         result.snapshotUpdateType = snapshotUpdateType;
         result.useWholeProjectContext = useWholeProjectContext;
