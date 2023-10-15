@@ -9,6 +9,7 @@ import consulo.execution.executor.Executor;
 import consulo.execution.runner.ProgramRunner;
 import consulo.gmaven.MavenLog;
 import consulo.gmaven.api.GMavenServer;
+import consulo.gmaven.extensionpoints.plugin.MavenCompilerFullImportPlugin;
 import consulo.gmaven.extensionpoints.plugin.MavenFullImportPlugin;
 import consulo.gmaven.settings.MavenExecutionSettings;
 import consulo.ide.impl.idea.util.PathUtil;
@@ -22,6 +23,7 @@ import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParametersList;
 import consulo.process.cmd.ParametersListUtil;
 import consulo.util.lang.StringUtil;
+import consulo.util.nodep.text.StringUtilRt;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,6 +34,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static consulo.gmaven.api.GMavenServer.*;
+import static java.lang.String.format;
 
 public class MavenServerCmdState extends CommandLineState {
 
@@ -73,7 +76,7 @@ public class MavenServerCmdState extends CommandLineState {
     private void setupGmavenPluginsProperty(OwnJavaParameters params) {
         List<MavenFullImportPlugin> extensionList = MavenFullImportPlugin.EP_NAME.getExtensionList();
         List<String> pluginsForImport = new ArrayList<>(extensionList.size());
-        /*for (MavenFullImportPlugin plugin : extensionList) {
+        for (MavenFullImportPlugin plugin : extensionList) {
             pluginsForImport.add(plugin.getKey());
             String annotationPath = plugin instanceof MavenCompilerFullImportPlugin
                     ? ((MavenCompilerFullImportPlugin) plugin).getAnnotationProcessorTagName() : null;
@@ -81,7 +84,7 @@ public class MavenServerCmdState extends CommandLineState {
 
             params.getVMParametersList()
                     .addProperty(format(GMAVEN_PLUGIN_ANNOTATION_PROCESSOR, plugin.getArtifactId()), annotationPath);
-        }*/
+        }
 
         if (!pluginsForImport.isEmpty()) {
             params.getVMParametersList().addProperty(GMAVEN_PLUGINS, String.join(";", pluginsForImport));

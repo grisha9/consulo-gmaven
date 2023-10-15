@@ -5,6 +5,7 @@ import consulo.externalSystem.model.task.ExternalSystemTaskId;
 import consulo.externalSystem.model.task.ExternalSystemTaskNotificationListener;
 import consulo.gmaven.settings.MavenExecutionSettings;
 
+import javax.annotation.Nullable;
 import java.nio.file.Path;
 
 public class GServerRequest {
@@ -14,6 +15,7 @@ public class GServerRequest {
     public Sdk sdk;
     public MavenExecutionSettings settings;
     public boolean installGMavenPlugin = false;
+    @Nullable
     public ExternalSystemTaskNotificationListener listener;
 
     public GServerRequest(ExternalSystemTaskId taskId,
@@ -21,6 +23,7 @@ public class GServerRequest {
                           Path mavenPath,
                           Sdk sdk,
                           MavenExecutionSettings settings,
+                          @Nullable
                           ExternalSystemTaskNotificationListener listener) {
         this.taskId = taskId;
         this.projectPath = projectPath;
