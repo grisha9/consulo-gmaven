@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -309,7 +310,7 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
             var mavenHome = MavenUtils.resolveMavenHome();
             if (mavenHome != null) {
                 mavenHomeCombobox.addItem(
-                        new DistributionSettingsComboBoxItem(DistributionSettings.getLocal(mavenHome.toPath()))
+                        new DistributionSettingsComboBoxItem(DistributionSettings.getLocal(mavenHome.getAbsolutePath()))
                 );
             }
 
@@ -369,7 +370,7 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
                 && mavenHomeCombobox.getSelectedItem() instanceof DistributionSettingsComboBoxItem) {
             var distributionSettings = ((DistributionSettingsComboBoxItem) mavenHomeCombobox.getSelectedItem()).value;
             if (distributionSettings.getType() == CUSTOM) {
-                distributionSettings = new DistributionSettings(CUSTOM, Path.of(mavenCustomPathField.getText()), null);
+                distributionSettings = new DistributionSettings(CUSTOM, mavenCustomPathField.getText(), null);
             }
             settings.setDistributionSettings(distributionSettings);
         }
@@ -529,7 +530,7 @@ public class ProjectSettingsControl extends AbstractExternalProjectSettingsContr
             if (settings.getType() == DistributionType.MVN) {
                 text = "Maven home(mvn)";
                 try {
-                    String mavenVersion = MavenUtils.getMavenVersion(settings.getPath().toFile());
+                    String mavenVersion = MavenUtils.getMavenVersion(new File(settings.getPath()));
                     if (mavenVersion != null) {
                         text += ": " + mavenVersion;
                     }

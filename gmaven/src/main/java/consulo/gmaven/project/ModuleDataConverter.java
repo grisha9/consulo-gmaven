@@ -5,6 +5,7 @@ import consulo.externalSystem.model.DataNode;
 import consulo.externalSystem.model.ProjectKeys;
 import consulo.externalSystem.model.project.ContentRootData;
 import consulo.externalSystem.model.project.ModuleData;
+import consulo.externalSystem.model.task.TaskData;
 import consulo.externalSystem.rt.model.ExternalSystemSourceType;
 import consulo.gmaven.Constants;
 import consulo.gmaven.api.model.MavenPlugin;
@@ -278,6 +279,11 @@ public class ModuleDataConverter {
         for (String basicPhase : Constants.BASIC_PHASES) {
             moduleDataNode.createChild(
                     LifecycleData.KEY, new LifecycleData(SYSTEM_ID, basicPhase, mavenProject.getBasedir())
+            );
+        }
+        for (String basicPhase : Constants.BASIC_PHASES) {
+            moduleDataNode.createChild(
+                    ProjectKeys.TASK, new TaskData(SYSTEM_ID, basicPhase, mavenProject.getBasedir(), null)
             );
         }
         if (!context.settings.isShowPluginNodes()) {

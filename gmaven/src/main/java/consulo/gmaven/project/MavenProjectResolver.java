@@ -85,7 +85,7 @@ public class MavenProjectResolver implements ExternalSystemProjectResolver<Maven
         var distributionPath = settings.getDistributionSettings().getPath();
         if (sdk != null && distributionPath != null) {
             GServerHelper.firstRun(
-                    new GServerRequest(id, Path.of(projectPath), distributionPath, sdk, settings, listener)
+                    new GServerRequest(id, Path.of(projectPath), Path.of(distributionPath), sdk, settings, listener)
             );
         }
         return projectDataNode;

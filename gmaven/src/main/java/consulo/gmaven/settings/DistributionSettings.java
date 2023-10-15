@@ -2,9 +2,8 @@ package consulo.gmaven.settings;
 
 import consulo.gmaven.Constants;
 import consulo.util.xml.serializer.Converter;
-import consulo.util.xml.serializer.annotation.OptionTag;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -13,11 +12,10 @@ import static java.util.Objects.requireNonNull;
 
 public class DistributionSettings {
     private DistributionType type;
-    @OptionTag(tag = "path", nameAttribute = "", converter = PathConverter.class)
-    private Path path;
+    private String path;
     private String url;
 
-    public DistributionSettings(DistributionType type, Path path, String url) {
+    public DistributionSettings(DistributionType type, String path, String url) {
         this.type = requireNonNull(type);
         this.path = path;
         this.url = url;
@@ -31,7 +29,7 @@ public class DistributionSettings {
         return new DistributionSettings(DistributionType.WRAPPER, null, requireNonNull(distributionUrl));
     }
 
-    public static DistributionSettings getLocal(Path mavenPath) {
+    public static DistributionSettings getLocal(String mavenPath) {
         return new DistributionSettings(DistributionType.MVN, requireNonNull(mavenPath), null);
     }
 
@@ -46,11 +44,11 @@ public class DistributionSettings {
         this.type = requireNonNull(type);
     }
 
-    public Path getPath() {
+    public String getPath() {
         return path;
     }
 
-    public void setPath(Path path) {
+    public void setPath(String path) {
         this.path = path;
     }
 
@@ -85,12 +83,12 @@ public class DistributionSettings {
     private static final class PathConverter extends Converter<Path> {
 
         @Override
-        public @NotNull Path fromString(@NotNull String string) {
+        public @Nonnull Path fromString(@Nonnull String string) {
             return Path.of(string);
         }
 
         @Override
-        public @NotNull String toString(@NotNull Path path) {
+        public @Nonnull String toString(@Nonnull Path path) {
             return path.toString();
         }
     }

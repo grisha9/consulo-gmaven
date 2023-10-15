@@ -56,10 +56,10 @@ public final class MavenUtils {
 
     @Nonnull
     public static Path getMavenHome(DistributionSettings distributionSettings) {
-        if (distributionSettings.getPath() != null) return distributionSettings.getPath();
+        if (distributionSettings.getPath() != null) return Path.of(distributionSettings.getPath());
         if (distributionSettings.getUrl() != null) {
             var mavenHome = MavenWrapperDistribution.getOrDownload(distributionSettings.getUrl());
-            distributionSettings.setPath(mavenHome.path());
+            distributionSettings.setPath(mavenHome.path().toString());
             return mavenHome.path();
         }
         throw new ExternalSystemException("maven home is empty");
