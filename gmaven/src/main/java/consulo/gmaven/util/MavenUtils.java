@@ -36,6 +36,14 @@ public final class MavenUtils {
     }
 
     @Nonnull
+    public static Path getGeneratedAnnotationsDirectory(
+            @Nonnull String buildDirectory,
+            boolean testSources) {
+        return getGeneratedSourcesDirectory(buildDirectory, testSources)
+                .resolve((testSources ? "test-annotations" : "annotations"));
+    }
+
+    @Nonnull
     public static String toGAString(@NotNull ModuleData moduleData) {
         return moduleData.getGroup() + ":" + moduleData.getExternalName();
     }

@@ -5,7 +5,6 @@ import consulo.localize.LocalizeValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -32,7 +31,7 @@ public interface Constants {
     String MODULE_PROP_BUILD_FILE = "buildFile";
     String MODULE_PROP_PARENT_GA = "parentGA";
     String MODULE_PROP_HAS_DEPENDENCIES = "hasDependencies";
-    List<String> BASIC_PHASES = List.of("clean", "validate", "compile", "test", "package", "verify", "install", "deploy", "site");
+    List<String> BASIC_PHASES = List.of("clean", "validate", "compile", "test", "package", "verify", "install", "dependency:tree");
     String SOURCE_SET_MODULE_TYPE_KEY = "sourceSet";
 
     static String getBundledDistributionUrl() {
