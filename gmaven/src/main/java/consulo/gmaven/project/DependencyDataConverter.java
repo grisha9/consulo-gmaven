@@ -3,7 +3,6 @@ package consulo.gmaven.project;
 import consulo.externalSystem.model.DataNode;
 import consulo.externalSystem.model.ProjectKeys;
 import consulo.externalSystem.model.project.*;
-import consulo.externalSystem.service.project.ProjectData;
 import consulo.gmaven.Constants;
 import consulo.gmaven.api.model.MavenArtifact;
 import consulo.gmaven.api.model.MavenProject;
@@ -20,12 +19,11 @@ public class DependencyDataConverter {
 
     public static void addDependencies(
             @Nonnull MavenProjectContainer container,
-            @Nonnull DataNode<ProjectData> projectNode,
             @Nonnull ProjectResolverContext context
     ) {
         addDependencies(container.getProject(), context);
         for (var childContainer : container.getModules()) {
-            addDependencies(childContainer, projectNode, context);
+            addDependencies(childContainer, context);
         }
     }
 

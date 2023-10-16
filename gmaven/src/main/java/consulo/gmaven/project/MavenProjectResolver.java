@@ -149,7 +149,7 @@ public class MavenProjectResolver implements ExternalSystemProjectResolver<Maven
         for (var childContainer : container.getModules()) {
             ModuleDataConverter.createModuleData(childContainer, moduleNode, context);
         }
-        DependencyDataConverter.addDependencies(container, projectDataNode, context);
+        DependencyDataConverter.addDependencies(container, context);
         populateProfiles(projectDataNode, context.mavenResult.settings);
         //moduleNode.data.setProperty(GMavenConstants.MODULE_PROP_LOCAL_REPO, mavenResult.settings.localRepository)
         return projectDataNode;
