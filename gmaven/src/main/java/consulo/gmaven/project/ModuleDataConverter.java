@@ -1,5 +1,6 @@
 package consulo.gmaven.project;
 
+import com.intellij.java.impl.externalSystem.JavaProjectData;
 import com.intellij.java.language.LanguageLevel;
 import consulo.externalSystem.model.DataNode;
 import consulo.externalSystem.model.ProjectKeys;
@@ -7,6 +8,7 @@ import consulo.externalSystem.model.project.ContentRootData;
 import consulo.externalSystem.model.project.ModuleData;
 import consulo.externalSystem.model.task.TaskData;
 import consulo.externalSystem.rt.model.ExternalSystemSourceType;
+import consulo.externalSystem.service.project.ProjectData;
 import consulo.gmaven.Constants;
 import consulo.gmaven.api.model.MavenPlugin;
 import consulo.gmaven.api.model.MavenProject;
@@ -38,7 +40,7 @@ public class ModuleDataConverter {
     @Nonnull
     public static DataNode<ModuleData> createModuleData(
             @Nonnull MavenProjectContainer container,
-            @Nonnull DataNode<?> parentDataNode,
+            @Nonnull DataNode<ProjectData> parentDataNode,
             @Nonnull ProjectResolverContext context
     ) {
         var project = container.getProject();
@@ -54,7 +56,9 @@ public class ModuleDataConverter {
 
         moduleData.setInheritProjectCompileOutputPath(false);
         moduleData.setCompileOutputPath(ExternalSystemSourceType.SOURCE, project.getOutputDirectory());
+        moduleData.setCompileOutputPath(ExternalSystemSourceType.RESOURCE, project.getOutputDirectory());
         moduleData.setCompileOutputPath(ExternalSystemSourceType.TEST, project.getTestOutputDirectory());
+        moduleData.setCompileOutputPath(ExternalSystemSourceType.TEST_RESOURCE, project.getTestOutputDirectory());
         //moduleData.setProperty(MODULE_PROP_BUILD_FILE, MavenUtils.getBuildFilePath(project.file.absolutePath))
 
         var moduleDataNode = parentDataNode.createChild(ProjectKeys.MODULE, moduleData);
@@ -89,13 +93,25 @@ public class ModuleDataConverter {
         contentRootData.forEach(it -> moduleDataNode.createChild(ProjectKeys.CONTENT_ROOT, it));
         context.moduleDataByArtifactId.put(project.getId(), moduleDataNode);
 
+        setLanguageLevel(parentDataNode, sourceLanguageLevel);
         setParentGA(project, context, moduleData);
-        if (parentDataNode.getData() instanceof ModuleData) {
-            for (var childContainer : container.getModules()) {
-                createModuleData(childContainer, moduleDataNode, context);
-            }
+
+        for (var childContainer : container.getModules()) {
+            createModuleData(childContainer, parentDataNode, context);
         }
+
         return moduleDataNode;
+    }
+
+    private static void setLanguageLevel(@Nonnull DataNode<ProjectData> parentDataNode,
+                                         @Nonnull LanguageLevel sourceLanguageLevel) {
+        parentDataNode.getChildren().stream()
+                .map(DataNode::getData)
+                .filter(it -> it instanceof JavaProjectData)
+                .map(it -> (JavaProjectData) it)
+                .filter(it -> !it.getLanguageLevel().isAtLeast(sourceLanguageLevel))
+                .findFirst()
+                .ifPresent(javaData -> javaData.setLanguageLevel(sourceLanguageLevel));
     }
 
     @Nonnull

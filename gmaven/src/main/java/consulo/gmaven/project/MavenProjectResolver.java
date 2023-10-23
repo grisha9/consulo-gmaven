@@ -126,17 +126,18 @@ public class MavenProjectResolver implements ExternalSystemProjectResolver<Maven
 
         LanguageLevel languageLevel = null;
         var projectDataNode = new DataNode<>(ProjectKeys.PROJECT, projectData, null);
+
+        var javaProjectData = new JavaProjectData(SYSTEM_ID, project.getOutputDirectory());
+        projectDataNode.createChild(JavaProjectData.KEY, javaProjectData);
         SdkTypeId sdkType = sdk.getSdkType();
         if (sdkType instanceof JavaSdk) {
             JavaSdkVersion version = ((JavaSdk) sdkType).getVersion(sdk);
+            if (version != null) javaProjectData.setJdkVersion(version);
             languageLevel = version != null ? version.getMaxLanguageLevel() : null;
         }
         if (languageLevel == null) {
             languageLevel = LanguageLevel.JDK_1_8;
         }
-        var javaProjectData = new JavaProjectData(SYSTEM_ID, project.getOutputDirectory());
-        projectDataNode.createChild(JavaProjectData.KEY, javaProjectData);
-
 
         var context = new ProjectResolverContext();
         context.mavenResult = mavenResult;
@@ -144,12 +145,12 @@ public class MavenProjectResolver implements ExternalSystemProjectResolver<Maven
         context.rootProjectPath = absolutePath;
         context.languageLevel = languageLevel;
 
-        var moduleNode = ModuleDataConverter.createModuleData(container, projectDataNode, context);
-
+        ModuleDataConverter.createModuleData(container, projectDataNode, context);
         for (var childContainer : container.getModules()) {
-            ModuleDataConverter.createModuleData(childContainer, moduleNode, context);
+            ModuleDataConverter.createModuleData(childContainer, projectDataNode, context);
         }
         DependencyDataConverter.addDependencies(container, context);
+        DependencyDataConverter.addProjectDependencies(projectDataNode, context);
         populateProfiles(projectDataNode, context.mavenResult.settings);
         //moduleNode.data.setProperty(GMavenConstants.MODULE_PROP_LOCAL_REPO, mavenResult.settings.localRepository)
         return projectDataNode;

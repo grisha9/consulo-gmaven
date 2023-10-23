@@ -3,6 +3,7 @@ package consulo.gmaven.project;
 import consulo.externalSystem.model.DataNode;
 import consulo.externalSystem.model.ProjectKeys;
 import consulo.externalSystem.model.project.*;
+import consulo.externalSystem.service.project.ProjectData;
 import consulo.gmaven.Constants;
 import consulo.gmaven.api.model.MavenArtifact;
 import consulo.gmaven.api.model.MavenProject;
@@ -27,6 +28,14 @@ public class DependencyDataConverter {
         }
     }
 
+    public static void addProjectDependencies(
+            @Nonnull DataNode<ProjectData> projectDataNode,
+            @Nonnull ProjectResolverContext context) {
+        for (LibraryData value : context.libraryDataByName.values()) {
+            projectDataNode.createChild(ProjectKeys.LIBRARY, value);
+        }
+    }
+
     private static void addDependencies(
             @Nonnull MavenProject project, @Nonnull ProjectResolverContext context
     ) {
@@ -43,7 +52,7 @@ public class DependencyDataConverter {
         for (MavenArtifact artifact : project.getResolvedArtifacts()) {
             var moduleDataNodeByMavenArtifact = context.moduleDataByArtifactId.get(artifact.getId());
             if (moduleDataNodeByMavenArtifact == null) {
-                addLibrary(moduleByMavenProject, artifact);
+                addLibrary(moduleByMavenProject, artifact, context);
             } else {
                 addModuleDependency(moduleByMavenProject, moduleDataNodeByMavenArtifact.getData());
             }
@@ -51,13 +60,15 @@ public class DependencyDataConverter {
     }
 
     private static void addLibrary(@Nonnull DataNode<ModuleData> parentNode,
-                                   @Nonnull MavenArtifact artifact) {
-        var createLibrary = createLibrary(artifact);
-        var libraryDependencyData = new LibraryDependencyData(parentNode.getData(), createLibrary, PROJECT);
+                                   @Nonnull MavenArtifact artifact,
+                                   ProjectResolverContext context) {
+        var libraryData = createLibrary(artifact);
+        context.libraryDataByName.put(libraryData.getExternalName(), libraryData);
+        var libraryDependencyData = new LibraryDependencyData(parentNode.getData(), libraryData, PROJECT);
         libraryDependencyData.setScope(getScope(artifact));
         parentNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
         if (libraryDependencyData.getScope() == DependencyScope.RUNTIME) {
-            var libraryDependencyDataTest = new LibraryDependencyData(parentNode.getData(), createLibrary, PROJECT);
+            var libraryDependencyDataTest = new LibraryDependencyData(parentNode.getData(), libraryData, PROJECT);
             libraryDependencyDataTest.setScope(DependencyScope.TEST);
             parentNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyDataTest);
         }
@@ -73,9 +84,6 @@ public class DependencyDataConverter {
     @Nonnull
     private static LibraryData createLibrary(@Nonnull MavenArtifact artifact) {
         var library = new LibraryData(Constants.SYSTEM_ID, artifact.getId(), !artifact.isResolved());
-        /*library.artifactId = artifact.getArtifactId()
-        library.setGroup(artifact.groupId)
-        library.version = artifact.version*/
         if (artifact.getFile() == null) return library;
         var artifactAbsolutePath = artifact.getFile().getAbsolutePath();
         library.addPath(getLibraryPathType(artifact), artifactAbsolutePath);
