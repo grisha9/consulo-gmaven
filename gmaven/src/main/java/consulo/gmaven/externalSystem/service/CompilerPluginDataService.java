@@ -3,6 +3,7 @@ package consulo.gmaven.externalSystem.service;
 import com.intellij.java.compiler.impl.javaCompiler.JavaCompilerConfiguration;
 import com.intellij.java.compiler.impl.javaCompiler.annotationProcessing.ProcessorConfigProfile;
 import com.intellij.java.compiler.impl.javaCompiler.annotationProcessing.impl.ProcessorConfigProfileImpl;
+import com.intellij.java.compiler.impl.javaCompiler.javac.JavacCompilerConfiguration;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.externalSystem.model.DataNode;
 import consulo.externalSystem.model.Key;
@@ -37,6 +38,7 @@ public class CompilerPluginDataService implements ProjectDataService<CompilerPlu
                            @Nonnull Project project,
                            boolean b) {
         var importedData = new HashSet<CompilerPluginData>();
+        var jvmAgs = new ArrayList<String>();
         JavaCompilerConfiguration config = JavaCompilerConfiguration.getInstance(project);
         for (var node : toImport) {
             ModuleData moduleData = (ModuleData) Optional.ofNullable(node.getParent())
@@ -55,7 +57,11 @@ public class CompilerPluginDataService implements ProjectDataService<CompilerPlu
             }
 
             configureAnnotationProcessing(config, ideModule, node.getData(), importedData);
-            //config.setAdditionalOptions(ideModule, ArrayList(node.data.arguments))
+            jvmAgs.addAll(node.getData().getArguments());
+        }
+        if (!jvmAgs.isEmpty()) {
+            var jpsJavaCompilerOptions = JavacCompilerConfiguration.getInstance(project);
+            jpsJavaCompilerOptions.ADDITIONAL_OPTIONS_STRING = String.join(" ", jvmAgs);
         }
     }
 

@@ -3,10 +3,9 @@ package consulo.gmaven.extensionpoints.plugin;
 import com.intellij.java.language.LanguageLevel;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.gmaven.MavenLog;
-import consulo.gmaven.api.model.MavenPlugin;
-import consulo.gmaven.api.model.MavenProject;
-import consulo.gmaven.api.model.PluginBody;
-import consulo.gmaven.api.model.PluginExecution;
+import consulo.gmaven.api.model.*;
+import consulo.gmaven.extensionpoints.model.PluginContentRoots;
+import consulo.gmaven.model.ProjectResolverContext;
 import consulo.gmaven.util.MavenArtifactUtil;
 import consulo.gmaven.util.MavenJDOMUtil;
 import consulo.util.lang.StringUtil;
@@ -15,9 +14,7 @@ import org.jdom.Element;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.intellij.java.language.LanguageLevel.HIGHEST;
 import static java.util.Collections.emptyList;
@@ -42,6 +39,24 @@ public class ApacheMavenCompilerPlugin implements MavenCompilerFullImportPlugin 
     @Override
     public String getArtifactId() {
         return "maven-compiler-plugin";
+    }
+
+    @Nonnull
+    @Override
+    public PluginContentRoots getContentRoots(
+            @Nonnull MavenProject mavenProject, @Nonnull MavenPlugin plugin, @Nonnull ProjectResolverContext context
+    ) {
+        List<MavenArtifact> dependencies = Objects.requireNonNullElse(plugin.getBody().getDependencies(), emptyList());
+        var groovyDependency = dependencies.stream()
+                .filter(it -> it.getGroupId().equals("org.codehaus.groovy"))
+                .filter(it -> it.getArtifactId().equals("groovy-eclipse-compiler"))
+                .findFirst();
+
+
+        if (groovyDependency.isEmpty()) {
+            new PluginContentRoots(Collections.emptyList(), Collections.emptySet());
+        }
+        return GroovyAbstractMavenPlugin.getContentRoots(mavenProject, plugin, context);
     }
 
     @Override
@@ -158,7 +173,7 @@ public class ApacheMavenCompilerPlugin implements MavenCompilerFullImportPlugin 
     private CompilerData toCompilerData(
             @Nonnull CompilerProp compilerProp,
             @Nonnull MavenProject mavenProject,
-            @Nonnull  MavenPlugin plugin,
+            @Nonnull MavenPlugin plugin,
             @Nonnull Path localRepositoryPath,
             @Nonnull Map<String, Element> contextElementMap
     ) {
@@ -190,7 +205,7 @@ public class ApacheMavenCompilerPlugin implements MavenCompilerFullImportPlugin 
         }
 
         if (testSource == null) {
-            testSource = requireNonNullElse(compilerProp.testSource , source);
+            testSource = requireNonNullElse(compilerProp.testSource, source);
         }
         if (testTarget == null) {
             testTarget = requireNonNullElse(compilerProp.testTarget, target);
@@ -206,7 +221,7 @@ public class ApacheMavenCompilerPlugin implements MavenCompilerFullImportPlugin 
     }
 
     @Nonnull
-    private CompilerData getDefaultCompilerData(@Nonnull MavenPlugin plugin, @Nonnull Path localRepositoryPath)  {
+    private CompilerData getDefaultCompilerData(@Nonnull MavenPlugin plugin, @Nonnull Path localRepositoryPath) {
         var descriptor = MavenArtifactUtil.readPluginDescriptor(localRepositoryPath, plugin);
         if (descriptor == null) {
             MavenLog.LOG.warn("null descriptor $plugin");
