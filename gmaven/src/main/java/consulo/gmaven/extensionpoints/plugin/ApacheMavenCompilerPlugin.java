@@ -283,10 +283,10 @@ public class ApacheMavenCompilerPlugin implements MavenCompilerFullImportPlugin 
             target = compilerProp.target;
         }
         if (testSource == null) {
-            testSource = requireNonNullElse(compilerProp.testSource, source);
+            testSource = compilerProp.testSource != null ? compilerProp.testSource : source;
         }
         if (testTarget == null) {
-            testTarget = requireNonNullElse(compilerProp.testTarget, target);
+            testTarget = compilerProp.testTarget != null ? compilerProp.testTarget : target;
         }
         if (source == null || target == null) {
             return new CompilerData(defaultLanguageLevel, emptyList(), emptyList());
