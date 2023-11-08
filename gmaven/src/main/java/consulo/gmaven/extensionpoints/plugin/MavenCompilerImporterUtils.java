@@ -82,7 +82,8 @@ public class MavenCompilerImporterUtils {
 
     @Nullable
     private static String getResolvedText(@Nullable String txt) {
-        var result = Objects.requireNonNullElse(StringUtil.nullize(txt), null);
+        var result = StringUtil.nullize(txt);
+        if (result == null) return null;
         if (hasUnresolvedProperty(result)) return null;
         return result;
     }
